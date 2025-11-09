@@ -1,6 +1,6 @@
 # Daily Trivia App
 
-A full-stack Node.js and Express web application that allows users to keep track of all of their important connections as they build their network.
+A full-stack Node.js and Express web application that allows users to practice their trivia skills on a daily basis.
 
 ## [Live Demo](https://daily-trivia-app.onrender.com/)
 
