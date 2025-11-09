@@ -30,12 +30,23 @@ app.get('/', (req, res) => {
     res.render('index.ejs', { chatMessages: result })
   })
 })
+// Worked on setting up this post request and debugging it with Michael Kazin
+app.post('/chatMessages', async (req, res) => {
+  const deleteCheck = await db.collection('chatMessages').findOne() 
+  db.collection('chatMessages').insertOne({ name: 'Contestant:' + ' ' + req.body.name + ' ',space:' ', msg: req.body.msg, TrueAnswer: req.body.trueanswer, thumbUp: 0, thumbDown: 0 }, (err, result) => {
+    console.log(deleteCheck)
 
-app.post('/chatMessages', (req, res) => {
-  db.collection('chatMessages').insertOne({ name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown: 0 }, (err, result) => {
     if (err) return console.log(err)
+    if (deleteCheck && req.body.trueanswer != deleteCheck.TrueAnswer ) {
+      db.collection('chatMessages')
+      .deleteMany({})
+    }
     console.log('saved to database')
-    res.redirect('/')
+    // res.redirect('/')
+    db.collection('chatMessages').find().toArray((err, result) => {
+      if (err) return console.log(err)
+      res.json({ chatMessages: result })
+    })
   })
 })
 

@@ -10,10 +10,79 @@
 
 */
 
+addEventListener('load', getTrivia)
+
+document.getElementById('submit').addEventListener('click', checkAnswer)
+const list =  document.querySelector('.chatMessages')
+
+
+
+// document.getElementById('trueAnswer').addEventListener('change', clearEntries)
 
 var thumbUp = document.getElementsByClassName("fa-thumbs-up");
 var trash = document.getElementsByClassName("fa-trash");
 var thumbDown = document.getElementsByClassName("fa-thumbs-down");
+
+
+function getTrivia () {
+  const questionLocation = document.getElementById('questionLocation').innerText
+  const myHeaders = new Headers();
+  myHeaders.append("X-Api-Key", "pZh/LHD2HypZAvi8/vagBQ==gLZmCoKXKbGJW72N");
+  
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow"
+  };
+  
+  fetch("https://api.api-ninjas.com/v1/triviaoftheday", requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      // console.log(result)
+      // console.log(result.split(","))
+      // console.log(result.text)
+      document.getElementById('questionLocation').innerText = result[0].question
+      document.getElementById('trueAnswer').value = result[0].answer
+      
+    })
+    .catch((error) => console.error(error));
+}
+// Worked on setting up and debugging this function with Michael Kazin
+function checkAnswer () {
+  const name = document.getElementById('contestant').value
+  const msg = document.getElementById('answer').value
+  const trueAnswer = document.getElementById('trueAnswer').value
+  if (document.getElementById('answer').value.toLowerCase() ===  document.getElementById('trueAnswer').value.toLowerCase()) {
+    alert('Congrats You\'re a Winner')
+    fetch('chatMessages', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        'name': name,
+        'msg': msg,
+        'trueanswer': trueAnswer
+      })
+    })
+      .then ((response => response.json()))
+      .then ((result) => {
+        console.log(result.content)
+        // list.innerText = result.content
+        list.style.display = 'inline-flex'
+      })
+  //  list.style.flex-direction = 'column'
+  } else {
+    alert ('Wrong Answer')
+    fetch('chatMessages', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        'name': name,
+        'msg': msg,
+        'trueanswer': trueAnswer
+      })
+    })
+  }
+}
 
 Array.from(thumbUp).forEach(function(element) {
       element.addEventListener('click', function(){
